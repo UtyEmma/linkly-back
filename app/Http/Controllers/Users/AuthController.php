@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\PasswordResetRequest;
 use App\Http\Requests\Auth\RecoverPasswordRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\RememberUserRequest;
 use App\Library\Response;
 use App\Library\Token;
 use App\Models\User;
@@ -35,12 +36,35 @@ class AuthController extends Controller {
     }
 
     function login(LoginRequest $request){
+
+
         if(!Auth::attempt($request->only(['email', 'password']))) return Response::error(400)->json('Invalid Email or Password');
         $user = User::where($request->only('email'))->with(['pages', 'pages.links'])->first();
         $token = $user->createToken('auth')->plainTextToken;
+
+        if($request->remember) {
+            $user->remember_token = Token::unique('users', 'remember_token');
+            $user->save();
+        }
+
         return Response::success()->json("Welcome Back", [
             'token' => $token,
-            'user' => $user
+            'user' => $user,
+            'remember_token' => $user->remember_token
+        ]);
+    }
+
+    function rememberUser(RememberUserRequest $request){
+        $user = User::where('remember_token', $request->token)->with(['pages', 'pages.links'])->first();
+        $token = $user->createToken('auth')->plainTextToken;
+
+        $user->remember_token = Token::unique('users', 'remember_token');
+        $user->save();
+        
+        return Response::success()->json("Welcome Back", [
+            'token' => $token,
+            'user' => $user,
+            'remember_token' => $user->remember_token
         ]);
     }
 

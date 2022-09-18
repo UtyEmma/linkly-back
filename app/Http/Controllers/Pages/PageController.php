@@ -21,7 +21,7 @@ class PageController extends Controller {
     
     function create(CreatePageRequest $request){
         $unique_id = Token::unique('pages');
-        $user = auth()->user();
+        $user = Auth::user();
 
         $slug = $request->slug ?? Str::slug($request->title);
 
@@ -31,9 +31,18 @@ class PageController extends Controller {
             'slug' => $slug,
             'logo' => null
         ])->toArray());
+
+        $pages = Page::where('user_id', $user->unique_id)->with(['links' => function($query){
+            $query->orderBy('position', 'desc');
+        }, 'visits' => function($query){
+            $query->latest();
+        }, 'links.clicks' => function($query){
+            $query->latest();
+        }])->withCount(['clicks', 'visits'])->get();
         
         return Response::success()->json('Page Created', [
-            'page' => $page
+            'page' => $page,
+            'pages' => $pages
         ]);
     }
 

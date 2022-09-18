@@ -29,6 +29,10 @@ Route::middleware('guest')->group(function(){
         Route::post('/recover', [AuthController::class, 'recoverPassword']);
         Route::post('/reset', [AuthController::class, 'resetPassword']);
     });
+
+    Route::prefix('/user')->group(function(){
+        Route::get('/remember', [AuthController::class, 'rememberUser']);
+    });
     
     Route::post('/page/{page_id}', [PageController::class, 'show']);
     Route::post('/click/{page_id}', [ClickController::class, 'create']);
