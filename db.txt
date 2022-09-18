@@ -1,0 +1,10 @@
+user
+    name - email
+pages
+    title - slug - views - desc - logo - user_id - status 
+links
+    title - url - page_id - user_id - image - status - pos
+sessions
+    referrer - device - country - city - ip_address
+clicks 
+    session_id - link_id
