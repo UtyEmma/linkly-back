@@ -28,7 +28,7 @@ class AnalyticsController extends Controller{
             'activity' => $this->traffic($page),
             'devices' => $this->devices($page),
             'referrers' => $this->referrer($page),
-            'country' => $this->country($page),
+            'countries' => $this->country($page),
             'city' => $this->city($page),
             'visits' => $page->visits()->count()
         ]);
@@ -68,7 +68,7 @@ class AnalyticsController extends Controller{
     }
     
     function country(Page $page){
-        return $page->visits()->select("country", DB::raw("count(*) as total"))->groupBy('country')->get();
+        return $page->visits()->select("country", DB::raw("count(*) as value, country_code"))->groupByRaw('country, country_code')->orderBy('value')->get();
     }
 
     function city(Page $page){

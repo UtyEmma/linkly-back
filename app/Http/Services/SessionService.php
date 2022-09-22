@@ -13,7 +13,7 @@ class SessionService {
         $unique_id = Token::unique('sessions');
         $request = request();
         $location = Location::get($request->ip());
-        // return $location;
+
         $session = Sessions::create([
             'page_id' => $page->unique_id,
             'unique_id' => $unique_id,
