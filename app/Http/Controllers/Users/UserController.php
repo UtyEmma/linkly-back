@@ -15,13 +15,7 @@ class UserController extends Controller{
         $user = Auth::user();
         if(!$user) return Response::error(401)->json();
         
-        $user = User::with(['pages', 'pages.links' => function($query){
-            $query->orderBy('position', 'desc');
-        }, 'pages.visits' => function($query){
-            $query->latest();
-        }, 'pages.links.clicks' => function($query){
-            $query->latest();
-        }])->find($user->unique_id);
+        $user = User::relations()->find($user->unique_id);
 
         return Response::success()->json([
             'user' => $user
@@ -31,6 +25,7 @@ class UserController extends Controller{
     function update(UpdateUserRequest $request){
         $user = Auth::user();
         User::find($user->unique_id)->update($request->safe()->all());
+        $user = User::relations()->find($user->unique_id);
         return Response::success()->json([
             'user' => $user
         ]);

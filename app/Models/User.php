@@ -30,6 +30,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    function scopeRelations($query){
+        return $query->with(['pages', 'pages.links' => function($query){
+            $query->orderBy('position', 'desc');
+        }, 'pages.visits' => function($query){
+            $query->latest();
+        }, 'pages.links.clicks' => function($query){
+            $query->latest();
+        }, 'pages.clicks' => function($query){
+            $query->latest();
+        }]);
+    }
+
     function pages(){
         return $this->hasMany(Page::class, 'user_id', 'unique_id');
     }

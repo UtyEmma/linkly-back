@@ -26,7 +26,7 @@ class AuthController extends Controller {
             'password' => Hash::make($request->password)
         ])->toArray());
 
-        $user = User::with(['pages', 'pages.links'])->find($user->unique_id);
+        $user = User::relations()->find($user->unique_id);
         $token = $user->createToken('auth')->plainTextToken;
 
         return Response::success()->json("Registration Successful", [
@@ -37,7 +37,7 @@ class AuthController extends Controller {
 
     function login(LoginRequest $request){
         if(!Auth::attempt($request->only(['email', 'password']))) return Response::error(400)->json('Invalid Email or Password');
-        $user = User::where($request->only('email'))->with(['pages', 'pages.links'])->first();
+        $user = User::where($request->only('email'))->relations()->first();
         $token = $user->createToken('auth')->plainTextToken;
 
         if($request->remember) {
@@ -53,7 +53,7 @@ class AuthController extends Controller {
     }
 
     function rememberUser(RememberUserRequest $request){
-        $user = User::where('remember_token', $request->token)->with(['pages', 'pages.links'])->first();
+        $user = User::where('remember_token', $request->token)->relations()->first();
         $token = $user->createToken('auth')->plainTextToken;
 
         $user->remember_token = Token::unique('users', 'remember_token');
