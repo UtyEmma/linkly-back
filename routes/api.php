@@ -27,7 +27,7 @@ Route::middleware('guest')->group(function(){
 
     Route::prefix('/password')->group(function(){
         Route::post('/recover', [AuthController::class, 'recoverPassword']);
-        Route::post('/reset', [AuthController::class, 'resetPassword']);
+        Route::post('/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
     });
 
     Route::prefix('/user')->group(function(){
@@ -42,7 +42,11 @@ Route::middleware('guest')->group(function(){
 
 Route::middleware('auth:sanctum')->group(function(){
     
-    Route::resource('user', UserController::class)->only(['index', 'update', 'destroy']);
+    Route::get('user', [UserController::class, 'index']);
+    Route::delete('user', [UserController::class, 'destroy']);
+    Route::put('user', [UserController::class, 'update']);
+    Route::put('user/password', [UserController::class, 'updatePassword']);
+    Route::get('logout', [AuthController::class, 'logout']);
 
     Route::prefix('pages')->group(function(){
         Route::post('/', [PageController::class, 'create']);

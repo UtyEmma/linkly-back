@@ -14,7 +14,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
-        'unique_id', 'name', 'email', 'username', 'password', 'instagram', 'facebook', 'twitter', 'phone', 'desc'
+        'unique_id', 'name', 'email', 'avatar', 'username', 'password', 'instagram', 'facebook', 'twitter', 'phone', 'desc'
     ];
 
     protected $primaryKey = 'unique_id';
